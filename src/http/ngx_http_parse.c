@@ -890,7 +890,16 @@ ngx_http_parse_header_line(ngx_http_request_t *r, ngx_buf_t *b,
                     break;
                 }
 
-                if (ch <= 0x20 || ch == 0x7f || ch == ':') {
+                /* RFC 7230: tchar = "!" / "#" / "$" / "%" / "&" / "'" / "*"
+                 *                  / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~"
+                 *                  / DIGIT / ALPHA
+                 */
+                if (ch <= 0x20 || ch == 0x7f || ch == ':' ||
+                    ch == '(' || ch == ')' || ch == '<' || ch == '>' ||
+                    ch == '@' || ch == ',' || ch == ';' || ch == '\\' ||
+                    ch == '"' || ch == '/' || ch == '[' || ch == ']' ||
+                    ch == '?' || ch == '=' || ch == '{' || ch == '}' ||
+                    ch == ' ' || ch == '\t') {
                     r->header_end = p;
                     return NGX_HTTP_PARSE_INVALID_HEADER;
                 }
@@ -959,7 +968,16 @@ ngx_http_parse_header_line(ngx_http_request_t *r, ngx_buf_t *b,
                 break;
             }
 
-            if (ch <= 0x20 || ch == 0x7f) {
+            /* RFC 7230: tchar = "!" / "#" / "$" / "%" / "&" / "'" / "*"
+             *                  / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~"
+             *                  / DIGIT / ALPHA
+             */
+            if (ch <= 0x20 || ch == 0x7f ||
+                ch == '(' || ch == ')' || ch == '<' || ch == '>' ||
+                ch == '@' || ch == ',' || ch == ';' || ch == '\\' ||
+                ch == '"' || ch == '/' || ch == '[' || ch == ']' ||
+                ch == '?' || ch == '=' || ch == '{' || ch == '}' ||
+                ch == ' ' || ch == '\t') {
                 r->header_end = p;
                 return NGX_HTTP_PARSE_INVALID_HEADER;
             }
